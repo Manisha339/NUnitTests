@@ -1,30 +1,54 @@
 ﻿using NUnit.Framework;
-using Calculator;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Moq;
+using Calculator;
 
-namespace Calculator.Tests
+namespace NUnitTests
 {
     [TestFixture()]
     public class CalculatorTests
     {
         private CCalculator calculator;
+
+        static List<TestCaseData> TestCases
+        {
+            get
+            {
+                return AddTestData.Get();
+            }
+        }
+
         [SetUp]
         public void Setup()
         {
-            calculator = new CCalculator();
+            /*Mock<Offset> mockObj = new Mock<Offset>();
+            mockObj.Setup(m => m.Get()).Returns(100);
+            calculator = new CCalculator(mockObj.Object);*/
+            FakeOffset fake = new FakeOffset();
+            calculator = new CCalculator(fake);
+            
         }
         [Test()]
-        [TestCase(10,20,ExpectedResult=30)]
-        [TestCase(100, 200, ExpectedResult = 300)]
-        [TestCase(1000, 2000, ExpectedResult = 3000)]
-        public int DDAddTest(int x, int y)
+        public void AddWithOffset_Test()
         {
-            
+            // Arrange
+            int num1 = 20, num2 = 40;
+            int expectedResult = 160;
+
+            // Act
+            int result = calculator.AddWithOffset(num1, num2);
+
+            // Assert
+            Assert.AreEqual(expectedResult, result);
+        }
+        [Test()]
+        [TestCaseSource("TestCases")]
+        public int DDAddTest(int x, int y)
+        { 
             //Act 
             return calculator.Add(x, y);
-
         }
 
         [Test()]
